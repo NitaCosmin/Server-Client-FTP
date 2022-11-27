@@ -1,0 +1,12 @@
+Se deschide folderul "Utilizare" acolo se gasesc doaua shortcut-uri
+Se ruleaza mai intai "server.py" si mai apoi "client.py"
+
+Lista cu utilizatorii
+
+User        Password
+
+Edy         12345
+Cosmin      12345
+Victor      12345
+
+Acest program poate fi modificat pentru a transfera fisiere prin aceiasi retea de internet doar folosind adresa ip a data de server.

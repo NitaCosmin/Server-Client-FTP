@@ -1,0 +1,124 @@
+import ftplib
+import socket
+from ftplib import all_errors
+
+def conectare():
+    print("Va rugam sa va conectati la un server FTP !!")
+    global ftp
+    hostname=socket.gethostname()   
+    IPAddr=socket.gethostbyname(hostname) 
+    print(IPAddr)
+    #host=input("Host:")
+    nume=input("Username: ")
+    parola=input("Password: ")
+    with ftplib.FTP(str(IPAddr)) as ftp:
+         ftp.login(nume, parola)
+         print("Conectarea a fost realizata cu success!!")
+         meniu()
+
+def meniu():
+ ans=True
+ while ans:
+    print("""
+--------------------MENIU_CLIENT_FTP---------------------
+\n
+Aveti in fata urmatoarele optiuni :
+\n
+    1.Listare fisier
+    2.Descarcare fisiere
+    3.Incarcare fisier
+    4.Stergere fisier
+    5.Redenumire fisier
+    6.Schimbare director
+    7.Revenire la directorul anterior
+    8.Creare director
+    9.Stergere director
+    10.Deconectare de la server
+
+
+    """)
+    ans=input("Ce optiune doriti sa utilizati ? ")
+    print("\n")
+    if ans=="1":
+      print("Directorul actual detine urmatoarele fisiere :\n")
+      ftp.dir()
+    elif ans=="2":
+     try:
+      nume_fisier = input("Introduceti numele fisierului pe care doriti sa il descarcati : ")
+      with open(nume_fisier, "wb") as file:
+          ftp.retrbinary(f"RETR {nume_fisier}", file.write)
+          print("Descarcarea a fost realizata cu succes!!")
+     except ftplib.error_perm as e:
+              error_code = str(e).split(None, 1)
+              if error_code[0] == '550':
+                    print(error_code[1])
+    elif ans=="3":
+     try:
+      nume_fisier = input("Introduceti numele fisierului pe care doriti sa il incarcati : ")
+      with open(nume_fisier, "rb") as file:
+          ftp.storbinary(f"STOR {nume_fisier}", file)
+          print("Incarcarea a fost realizata cu succes!!")
+     except all_errors as error:
+        print(f"Error checking text file size: {error}")
+
+    elif ans=="4":
+     try:
+      fisier=input("Ce fisier doriti sa stergeti? ")
+      ftp.delete(fisier)
+      print(" Fisierul a fost sters cu succes!!")
+     except ftplib.error_perm as e:
+              error_code = str(e).split(None, 1)                        
+              if error_code[0] == '550':
+                  print(error_code[1])
+    elif ans=="5":
+     try:
+      nume_initial=input("Ce fisier doriti sa redenumiti  ? ")
+      nume_final=input("Ce nume doriti sa ii puneti ? ")
+      ftp.rename(nume_initial,nume_final)
+      print("Redenumirea fisierului a fost realizata cu success!!")
+     except ftplib.error_perm as e:
+              error_code = str(e).split(None, 1)
+              if error_code[0] == '550':
+                    print(error_code[1])
+    elif ans=="6":
+     try:
+      director=input("Ce director doriti sa deschideti ? ")
+      print(ftp.cwd(director))
+     except ftplib.error_perm as e:
+              error_code = str(e).split(None, 1)
+              if error_code[0] == '550':
+                    print(error_code[1])
+    elif ans=="7":
+      print(ftp.cwd('..'))
+    elif ans=="8":
+     try:
+      director1=input("Ce director doriti sa creati ? ")
+      ftp.mkd(director1)
+      print("Directorul a fost creat cu succes ! ")
+     except ftplib.error_perm as e:
+              error_code = str(e).split(None, 1)
+              if error_code[0] == '550':
+                    print(error_code[1])
+    elif ans=="9":
+     try:
+      director2=input("Ce director doriti sa stergeti? ")
+      ftp.rmd(director2)
+      print("Directorul a fost sters cu succes ! ")
+     except ftplib.error_perm as e:
+              error_code = str(e).split(None, 1)
+              if error_code[0] == '550':
+                    print(error_code[1]) 
+    elif ans=="10":
+      ftp.quit()
+      print("\n V-ati deconectat cu succes de la server!")
+      print("\n Programul a luat sfarsit!")
+      print("\n La revedere !!")
+      ans = None
+    else:
+       print("\n Optiune invalida . Tastati o alta optiune !!")
+       
+conectare()
+
+
+
+
